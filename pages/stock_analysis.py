@@ -219,9 +219,7 @@ with col4:
 with col5:
     if st.button("5Y"):
         num_period = '5y'
-with col6:
-    if st.button("MAX"):
-        num_period = 'max'
+
 
 
 col1, col2, col3 = st.columns(3)
