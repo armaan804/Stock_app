@@ -232,9 +232,22 @@ with col2:
         indicators = st.selectbox('', ('RSI', 'MACD'))
     else:
         indicators = st.selectbox('', ('RSI', 'Moving Average', 'MACD'))
+
 ticker_ = yf.Ticker(ticker)
-new_df1 = ticker_.history(period='max')
-data1 = ticker_.history(period='max')
+
+# Use selected period for history requests and avoid redundant calls
+selected_period = num_period if num_period else '6mo'
+try:
+    data1 = ticker_.history(period=selected_period)
+    if data1 is None or data1.empty:
+        st.warning(f"No historical data available for '{ticker}' using period '{selected_period}'.")
+        st.stop()
+except Exception as exc:
+    st.error(f"Failed to load historical data for '{ticker}': {exc}")
+    st.stop()
+
+new_df1 = data1.copy()
+
 if chart_type == "Candlestick" and indicators == 'RSI':
     st.plotly_chart(candlestick(data1,num_period),use_container_width=True)
     st.plotly_chart(RSI(data1,num_period),use_container_width=True)
